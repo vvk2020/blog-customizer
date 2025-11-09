@@ -6,6 +6,8 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import { Select } from 'src/ui/select';
 import {
+	contentWidthArr,
+	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
@@ -15,13 +17,27 @@ import { Text } from 'src/ui/text';
 import { Separator } from 'src/ui/separator';
 import { RadioGroup } from 'src/ui/radio-group';
 import { TextProps } from 'src/ui/text/Text';
+// import { StoryDecorator } from 'src/ui/story-decorator';
 
 export const ArticleParamsForm = () => {
 	const [isFormOpen, setIsFormOpen] = useState(false);
-	const [fontSize, setFontSize] = useState(fontSizeOptions[0]);
+	const [fontFamily, setFontFamily] = useState(
+		defaultArticleState.fontFamilyOption
+	);
+	const [fontSize, setFontSize] = useState(defaultArticleState.fontSizeOption);
+	const [fontColor, setFontColor] = useState(defaultArticleState.fontColor);
+	const [bgColor, setBgColor] = useState(defaultArticleState.backgroundColor);
+	const [contentWidth, setContentWidth] = useState(
+		defaultArticleState.contentWidth
+	);
 
 	const handleToggleForm = () => {
 		setIsFormOpen(!isFormOpen);
+	};
+
+	const handleFontFamily = (fontFamily: OptionType) => {
+		setFontFamily(fontFamily);
+		console.log('fontFamily:', fontFamily);
 	};
 
 	const handleFontSize = (fontSize: OptionType) => {
@@ -29,10 +45,25 @@ export const ArticleParamsForm = () => {
 		console.log('fontSize:', fontSize);
 	};
 
-	// Параетры текста заголовков полей формы
-	const titleFontSettings: TextProps = {
+	const handleFontColor = (fontColor: OptionType) => {
+		setFontColor(fontColor);
+		console.log('fontColor:', fontColor);
+	};
+
+	const handleBgColor = (bgColor: OptionType) => {
+		setBgColor(bgColor);
+		console.log('bgColor:', bgColor);
+	};
+
+	const handleContentWidth = (contentWidth: OptionType) => {
+		setContentWidth(contentWidth);
+		console.log('contentWidth:', contentWidth);
+	};
+
+	// Стиль текста заголовков полей формы
+	const titleFieldSettings: TextProps = {
 		children: null,
-		as: 'label',
+		// as: 'label',
 		size: 12,
 		weight: 800,
 		uppercase: true,
@@ -47,12 +78,19 @@ export const ArticleParamsForm = () => {
 						[styles.container_open]: isFormOpen,
 					})}>
 					<form className={styles.form}>
-						<Text {...titleFontSettings}>
-							Шрифт
-							<Select selected={null} options={fontFamilyOptions}></Select>
-						</Text>
+						{/* <StoryDecorator></StoryDecorator> */}
 
-						<Text {...titleFontSettings}>
+						{/* <StoryDecorator> */}
+						<Text {...titleFieldSettings}>
+							Шрифт
+							<Select
+								selected={fontFamily}
+								options={fontFamilyOptions}
+								onChange={handleFontFamily}></Select>
+						</Text>
+						{/* </StoryDecorator> */}
+
+						<Text {...titleFieldSettings}>
 							Размер шрифта
 							<RadioGroup
 								name='size'
@@ -62,12 +100,32 @@ export const ArticleParamsForm = () => {
 								title={''}></RadioGroup>
 						</Text>
 
-						<Text {...titleFontSettings}>
-							Цвет фона
-							<Select selected={null} options={fontColors}></Select>
+						<Text {...titleFieldSettings}>
+							Цвет шрифта
+							<Select
+								selected={fontColor}
+								options={fontColors}
+								onChange={handleFontColor}></Select>
 						</Text>
 
 						<Separator />
+
+						<Text {...titleFieldSettings}>
+							Цвет фона
+							<Select
+								selected={bgColor}
+								options={fontColors}
+								onChange={handleBgColor}></Select>
+						</Text>
+
+						<Text {...titleFieldSettings}>
+							Ширина контента
+							<Select
+								selected={contentWidth}
+								options={contentWidthArr}
+								onChange={handleContentWidth}></Select>
+						</Text>
+
 						<div className={styles.bottomContainer}>
 							<Button title='Сбросить' htmlType='reset' type='clear' />
 							<Button title='Применить' htmlType='submit' type='apply' />
