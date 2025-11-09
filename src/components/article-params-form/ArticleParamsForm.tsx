@@ -29,7 +29,7 @@ export const ArticleParamsForm = () => {
 		console.log('fontSize:', fontSize);
 	};
 
-	// Настройки текста заголовков полей формы
+	// Параетры текста заголовков полей формы
 	const titleFontSettings: TextProps = {
 		children: null,
 		as: 'label',
