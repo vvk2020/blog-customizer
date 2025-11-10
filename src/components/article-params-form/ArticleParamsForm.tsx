@@ -60,6 +60,30 @@ export const ArticleParamsForm = () => {
 		console.log('contentWidth:', contentWidth);
 	};
 
+	// Обработчик отправки формы
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		console.log('Settings applied:', {
+			fontFamily,
+			fontSize,
+			fontColor,
+			bgColor,
+			contentWidth,
+		});
+	};
+
+	// Обработчик события reset формы
+	const handleReset = (e: React.FormEvent) => {
+		e.preventDefault();
+		// Сбрасываем все состояния к начальным значениям
+		setFontFamily(defaultArticleState.fontFamilyOption);
+		setFontSize(defaultArticleState.fontSizeOption);
+		setFontColor(defaultArticleState.fontColor);
+		setBgColor(defaultArticleState.backgroundColor);
+		setContentWidth(defaultArticleState.contentWidth);
+		console.log('Form reset to default values');
+	};
+
 	// Стиль текста заголовков полей формы
 	const titleFieldSettings: TextProps = {
 		children: null,
@@ -77,8 +101,13 @@ export const ArticleParamsForm = () => {
 					className={clsx(styles.container, {
 						[styles.container_open]: isFormOpen,
 					})}>
-					<form className={styles.form}>
-						{/* <StoryDecorator></StoryDecorator> */}
+					<form
+						className={styles.form}
+						onSubmit={handleSubmit}
+						onReset={handleReset}>
+						<Text {...titleFieldSettings} size={31}>
+							Задайте параметры
+						</Text>
 
 						{/* <StoryDecorator> */}
 						<Text {...titleFieldSettings}>
