@@ -31,10 +31,12 @@ export const ArticleParamsForm = () => {
 		defaultArticleState.contentWidth
 	);
 
+	// Обработчик кнопки открытия окна формы
 	const handleToggleForm = () => {
 		setIsFormOpen(!isFormOpen);
 	};
 
+	// Обработчики полей формы
 	const handleFontFamily = (fontFamily: OptionType) => {
 		setFontFamily(fontFamily);
 		console.log('fontFamily:', fontFamily);
