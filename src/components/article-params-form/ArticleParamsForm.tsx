@@ -27,69 +27,36 @@ export const ArticleParamsForm = ({
 	onParamsChange,
 }: ArticleParamsFormProps) => {
 	const [isFormOpen, setIsFormOpen] = useState(false);
-	const [fontFamilyOption, setFontFamily] = useState(
-		defaultArticleState.fontFamilyOption
-	);
-	const [fontSizeOption, setFontSize] = useState(
-		defaultArticleState.fontSizeOption
-	);
-	const [fontColor, setFontColor] = useState(defaultArticleState.fontColor);
-	const [backgroundColor, setBgColor] = useState(
-		defaultArticleState.backgroundColor
-	);
-	const [contentWidth, setContentWidth] = useState(
-		defaultArticleState.contentWidth
-	);
+	const [formState, setFormState] =
+		useState<ArticleStateType>(defaultArticleState);
 
-	// Обработчик кнопки открытия окна формы
+	/** Обработчик кнопки открытия окна формы */
 	const handleToggleForm = () => {
 		setIsFormOpen(!isFormOpen);
 	};
 
-	// Обработчики полей формы
-	const handleFontFamily = (fontFamily: OptionType) => {
-		setFontFamily(fontFamily);
-	};
+	/** Универсальный обработчик для всех полей */
+	const handleFieldChange =
+		(field: keyof ArticleStateType) => (value: OptionType) => {
+			setFormState((prevState) => ({
+				...prevState,
+				[field]: value,
+			}));
+		};
 
-	const handleFontSize = (fontSize: OptionType) => {
-		setFontSize(fontSize);
-	};
-
-	const handleFontColor = (fontColor: OptionType) => {
-		setFontColor(fontColor);
-	};
-
-	const handleBgColor = (bgColor: OptionType) => {
-		setBgColor(bgColor);
-	};
-
-	const handleContentWidth = (contentWidth: OptionType) => {
-		setContentWidth(contentWidth);
-	};
-
-	// Обработчик submit формы
+	/** Обработчик submit формы */
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		// Вызов callback родителя для перерисовки статьи
-		onParamsChange({
-			fontFamilyOption,
-			fontSizeOption,
-			fontColor,
-			backgroundColor,
-			contentWidth,
-		});
+		onParamsChange(formState);
 	};
 
-	// Обработчик reset формы
+	/** Обработчик reset формы */
 	const handleReset = (e: React.FormEvent) => {
 		e.preventDefault();
-		// Сброс всех состояний к defaultArticleState
-		setFontFamily(defaultArticleState.fontFamilyOption);
-		setFontSize(defaultArticleState.fontSizeOption);
-		setFontColor(defaultArticleState.fontColor);
-		setBgColor(defaultArticleState.backgroundColor);
-		setContentWidth(defaultArticleState.contentWidth);
-		// Вызов callback родителя для перерисовки статьи
+		// Сброс состояния к defaultArticleState
+		setFormState(defaultArticleState);
+		// Вызов callback родителя для перерисовки с новыми параметрами
 		onParamsChange(defaultArticleState);
 	};
 
@@ -110,36 +77,36 @@ export const ArticleParamsForm = ({
 						</Text>
 
 						<Select
-							selected={fontFamilyOption}
+							selected={formState.fontFamilyOption}
 							options={fontFamilyOptions}
-							onChange={handleFontFamily}
+							onChange={handleFieldChange('fontFamilyOption')}
 							title={'Шрифт'}></Select>
 
 						<RadioGroup
 							name='size'
+							selected={formState.fontSizeOption}
 							options={fontSizeOptions}
-							selected={fontSizeOption}
-							onChange={handleFontSize}
+							onChange={handleFieldChange('fontSizeOption')}
 							title={'Размер шрифта'}></RadioGroup>
 
 						<Select
-							selected={fontColor}
+							selected={formState.fontColor}
 							options={fontColors}
-							onChange={handleFontColor}
+							onChange={handleFieldChange('fontColor')}
 							title={'Цвет шрифта'}></Select>
 
 						<Separator />
 
 						<Select
-							selected={backgroundColor}
+							selected={formState.backgroundColor}
 							options={backgroundColors}
-							onChange={handleBgColor}
+							onChange={handleFieldChange('backgroundColor')}
 							title={'Цвет фона'}></Select>
 
 						<Select
-							selected={contentWidth}
+							selected={formState.contentWidth}
 							options={contentWidthArr}
-							onChange={handleContentWidth}
+							onChange={handleFieldChange('contentWidth')}
 							title={'Ширина контента'}></Select>
 
 						<div className={styles.bottomContainer}>
