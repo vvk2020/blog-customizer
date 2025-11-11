@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { Select } from 'src/ui/select';
 import {
 	ArticleStateType,
+	backgroundColors,
 	contentWidthArr,
 	defaultArticleState,
 	fontColors,
@@ -17,7 +18,6 @@ import {
 import { Text } from 'src/ui/text';
 import { Separator } from 'src/ui/separator';
 import { RadioGroup } from 'src/ui/radio-group';
-import { TextProps } from 'src/ui/text/Text';
 
 export interface ArticleParamsFormProps {
 	onParamsChange: (formParamsState: ArticleStateType) => void;
@@ -83,7 +83,7 @@ export const ArticleParamsForm = ({
 	// Обработчик reset формы
 	const handleReset = (e: React.FormEvent) => {
 		e.preventDefault();
-		// Сбрасываем все состояния к defaultArticleState
+		// Сброс всех состояний к defaultArticleState
 		setFontFamily(defaultArticleState.fontFamilyOption);
 		setFontSize(defaultArticleState.fontSizeOption);
 		setFontColor(defaultArticleState.fontColor);
@@ -91,15 +91,6 @@ export const ArticleParamsForm = ({
 		setContentWidth(defaultArticleState.contentWidth);
 		// Вызов callback родителя для перерисовки статьи
 		onParamsChange(defaultArticleState);
-	};
-
-	// Стиль текста заголовков полей формы
-	const titleFieldSettings: TextProps = {
-		children: null,
-		// as: 'label',
-		size: 12,
-		weight: 800,
-		uppercase: true,
 	};
 
 	return (
@@ -114,53 +105,42 @@ export const ArticleParamsForm = ({
 						className={styles.form}
 						onSubmit={handleSubmit}
 						onReset={handleReset}>
-						<Text {...titleFieldSettings} size={31}>
+						<Text size={31} weight={800} uppercase>
 							Задайте параметры
 						</Text>
 
-						<Text {...titleFieldSettings}>
-							Шрифт
-							<Select
-								selected={fontFamilyOption}
-								options={fontFamilyOptions}
-								onChange={handleFontFamily}></Select>
-						</Text>
+						<Select
+							selected={fontFamilyOption}
+							options={fontFamilyOptions}
+							onChange={handleFontFamily}
+							title={'Шрифт'}></Select>
 
-						<Text {...titleFieldSettings}>
-							Размер шрифта
-							<RadioGroup
-								name='size'
-								options={fontSizeOptions}
-								selected={fontSizeOption}
-								onChange={handleFontSize}
-								title={''}></RadioGroup>
-						</Text>
+						<RadioGroup
+							name='size'
+							options={fontSizeOptions}
+							selected={fontSizeOption}
+							onChange={handleFontSize}
+							title={'Размер шрифта'}></RadioGroup>
 
-						<Text {...titleFieldSettings}>
-							Цвет шрифта
-							<Select
-								selected={fontColor}
-								options={fontColors}
-								onChange={handleFontColor}></Select>
-						</Text>
+						<Select
+							selected={fontColor}
+							options={fontColors}
+							onChange={handleFontColor}
+							title={'Цвет шрифта'}></Select>
 
 						<Separator />
 
-						<Text {...titleFieldSettings}>
-							Цвет фона
-							<Select
-								selected={backgroundColor}
-								options={fontColors}
-								onChange={handleBgColor}></Select>
-						</Text>
+						<Select
+							selected={backgroundColor}
+							options={backgroundColors}
+							onChange={handleBgColor}
+							title={'Цвет фона'}></Select>
 
-						<Text {...titleFieldSettings}>
-							Ширина контента
-							<Select
-								selected={contentWidth}
-								options={contentWidthArr}
-								onChange={handleContentWidth}></Select>
-						</Text>
+						<Select
+							selected={contentWidth}
+							options={contentWidthArr}
+							onChange={handleContentWidth}
+							title={'Ширина контента'}></Select>
 
 						<div className={styles.bottomContainer}>
 							<Button title='Сбросить' htmlType='reset' type='clear' />
