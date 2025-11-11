@@ -20,3 +20,12 @@ dist
 .yarn
 
 storybook-static
+
+#vvk
+.bak/
+.fig/
+.hlp/
+.review/
+.sh/
+.tmp/
+.postman/
