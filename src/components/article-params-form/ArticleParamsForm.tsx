@@ -18,6 +18,7 @@ import {
 import { Text } from 'src/ui/text';
 import { Separator } from 'src/ui/separator';
 import { RadioGroup } from 'src/ui/radio-group';
+import { useCloseOnOutsideClickOrEsc } from 'src/hooks';
 
 export interface ArticleParamsFormProps {
 	onParamsChange: (formParamsState: ArticleStateType) => void;
@@ -50,20 +51,31 @@ export const ArticleParamsForm = ({
 	}, [isFormOpen]);
 
 	// Закрытие по клику вне aside
-	useEffect(() => {
-		const handleClickOutside = (e: MouseEvent) => {
-			if (
-				asideRef.current &&
-				!asideRef.current.contains(e.target as Node) &&
-				isFormOpen
-			) {
-				setIsFormOpen(false);
-			}
-		};
 
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [isFormOpen]);
+	// Вариант 1
+
+	// useEffect(() => {
+	// 	const handleClickOutside = (e: MouseEvent) => {
+	// 		if (
+	// 			asideRef.current &&
+	// 			!asideRef.current.contains(e.target as Node) &&
+	// 			isFormOpen
+	// 		) {
+	// 			setIsFormOpen(false);
+	// 		}
+	// 	};
+
+	// 	document.addEventListener('mousedown', handleClickOutside);
+	// 	return () => document.removeEventListener('mousedown', handleClickOutside);
+	// }, [isFormOpen]);
+
+	// Вариант 2 (ревьюера)
+
+	useCloseOnOutsideClickOrEsc({
+		isOpenElement: isFormOpen, // Флаг, открыт ли элемент (например, модальное окно или форма)
+		onClose: () => setIsFormOpen(false), // Колбэк, вызываемый при закрытии
+		elementRef: asideRef, // Ссылка на DOM-элемент, вне которого отслеживаем клик
+	});
 
 	// Эффект для обновления состояния формы при открытии
 	useEffect(() => {
