@@ -2,7 +2,7 @@ import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Select } from 'src/ui/select';
 import {
@@ -21,14 +21,33 @@ import { RadioGroup } from 'src/ui/radio-group';
 
 export interface ArticleParamsFormProps {
 	onParamsChange: (formParamsState: ArticleStateType) => void;
+	formParamsState: ArticleStateType;
 }
 
 export const ArticleParamsForm = ({
 	onParamsChange,
+	formParamsState,
 }: ArticleParamsFormProps) => {
 	const [isFormOpen, setIsFormOpen] = useState(false);
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
+
+	// Ref для отслеживания первого открытия
+	const isFirstOpen = useRef(true);
+
+	// Эффект для обновления состояния формы при открытии
+	useEffect(() => {
+		if (isFormOpen) {
+			if (isFirstOpen.current) {
+				// Первое открытие - используем defaultArticleState
+				setFormState(defaultArticleState);
+				isFirstOpen.current = false;
+			} else {
+				// Повторное открытие - используем ранее сохраненное состояние
+				setFormState(formParamsState);
+			}
+		}
+	}, [isFormOpen, formParamsState]);
 
 	/** Обработчик кнопки открытия окна формы */
 	const handleToggleForm = () => {
@@ -36,13 +55,15 @@ export const ArticleParamsForm = ({
 	};
 
 	/** Универсальный обработчик для всех полей */
-	const handleFieldChange =
+	const handleFieldChange = useCallback(
 		(field: keyof ArticleStateType) => (value: OptionType) => {
 			setFormState((prevState) => ({
 				...prevState,
 				[field]: value,
 			}));
-		};
+		},
+		[]
+	);
 
 	/** Обработчик submit формы */
 	const handleSubmit = (e: React.FormEvent) => {
@@ -63,59 +84,57 @@ export const ArticleParamsForm = ({
 	return (
 		<>
 			<ArrowButton isOpen={isFormOpen} onClick={handleToggleForm} />
-			{isFormOpen && (
-				<aside
-					className={clsx(styles.container, {
-						[styles.container_open]: isFormOpen,
-					})}>
-					<form
-						className={styles.form}
-						onSubmit={handleSubmit}
-						onReset={handleReset}>
-						<Text size={31} weight={800} uppercase>
-							Задайте параметры
-						</Text>
+			<aside
+				className={clsx(styles.container, {
+					[styles.container_open]: isFormOpen,
+				})}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
+					<Text as={'h2'} size={31} weight={800} uppercase>
+						Задайте параметры
+					</Text>
 
-						<Select
-							selected={formState.fontFamilyOption}
-							options={fontFamilyOptions}
-							onChange={handleFieldChange('fontFamilyOption')}
-							title={'Шрифт'}></Select>
+					<Select
+						selected={formState.fontFamilyOption}
+						options={fontFamilyOptions}
+						onChange={handleFieldChange('fontFamilyOption')}
+						title={'Шрифт'}></Select>
 
-						<RadioGroup
-							name='size'
-							selected={formState.fontSizeOption}
-							options={fontSizeOptions}
-							onChange={handleFieldChange('fontSizeOption')}
-							title={'Размер шрифта'}></RadioGroup>
+					<RadioGroup
+						name='size'
+						selected={formState.fontSizeOption}
+						options={fontSizeOptions}
+						onChange={handleFieldChange('fontSizeOption')}
+						title={'Размер шрифта'}></RadioGroup>
 
-						<Select
-							selected={formState.fontColor}
-							options={fontColors}
-							onChange={handleFieldChange('fontColor')}
-							title={'Цвет шрифта'}></Select>
+					<Select
+						selected={formState.fontColor}
+						options={fontColors}
+						onChange={handleFieldChange('fontColor')}
+						title={'Цвет шрифта'}></Select>
 
-						<Separator />
+					<Separator />
 
-						<Select
-							selected={formState.backgroundColor}
-							options={backgroundColors}
-							onChange={handleFieldChange('backgroundColor')}
-							title={'Цвет фона'}></Select>
+					<Select
+						selected={formState.backgroundColor}
+						options={backgroundColors}
+						onChange={handleFieldChange('backgroundColor')}
+						title={'Цвет фона'}></Select>
 
-						<Select
-							selected={formState.contentWidth}
-							options={contentWidthArr}
-							onChange={handleFieldChange('contentWidth')}
-							title={'Ширина контента'}></Select>
+					<Select
+						selected={formState.contentWidth}
+						options={contentWidthArr}
+						onChange={handleFieldChange('contentWidth')}
+						title={'Ширина контента'}></Select>
 
-						<div className={styles.bottomContainer}>
-							<Button title='Сбросить' htmlType='reset' type='clear' />
-							<Button title='Применить' htmlType='submit' type='apply' />
-						</div>
-					</form>
-				</aside>
-			)}
+					<div className={styles.bottomContainer}>
+						<Button title='Сбросить' htmlType='reset' type='clear' />
+						<Button title='Применить' htmlType='submit' type='apply' />
+					</div>
+				</form>
+			</aside>
 		</>
 	);
 };
