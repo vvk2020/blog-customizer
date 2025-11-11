@@ -35,6 +35,36 @@ export const ArticleParamsForm = ({
 	// Ref для отслеживания первого открытия
 	const isFirstOpen = useRef(true);
 
+	// Ref для aside элемента
+	const asideRef = useRef<HTMLDivElement>(null);
+
+	// Закрытие по ESC
+	useEffect(() => {
+		const handleEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape' && isFormOpen) {
+				setIsFormOpen(false);
+			}
+		};
+		document.addEventListener('keydown', handleEscape);
+		return () => document.removeEventListener('keydown', handleEscape);
+	}, [isFormOpen]);
+
+	// Закрытие по клику вне aside
+	useEffect(() => {
+		const handleClickOutside = (e: MouseEvent) => {
+			if (
+				asideRef.current &&
+				!asideRef.current.contains(e.target as Node) &&
+				isFormOpen
+			) {
+				setIsFormOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, [isFormOpen]);
+
 	// Эффект для обновления состояния формы при открытии
 	useEffect(() => {
 		if (isFormOpen) {
@@ -85,6 +115,7 @@ export const ArticleParamsForm = ({
 		<>
 			<ArrowButton isOpen={isFormOpen} onClick={handleToggleForm} />
 			<aside
+				ref={asideRef}
 				className={clsx(styles.container, {
 					[styles.container_open]: isFormOpen,
 				})}>
