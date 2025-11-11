@@ -6,6 +6,7 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import { Select } from 'src/ui/select';
 import {
+	ArticleStateType,
 	contentWidthArr,
 	defaultArticleState,
 	fontColors,
@@ -17,16 +18,25 @@ import { Text } from 'src/ui/text';
 import { Separator } from 'src/ui/separator';
 import { RadioGroup } from 'src/ui/radio-group';
 import { TextProps } from 'src/ui/text/Text';
-// import { StoryDecorator } from 'src/ui/story-decorator';
 
-export const ArticleParamsForm = () => {
+export interface ArticleParamsFormProps {
+	onParamsChange: (formParamsState: ArticleStateType) => void;
+}
+
+export const ArticleParamsForm = ({
+	onParamsChange,
+}: ArticleParamsFormProps) => {
 	const [isFormOpen, setIsFormOpen] = useState(false);
-	const [fontFamily, setFontFamily] = useState(
+	const [fontFamilyOption, setFontFamily] = useState(
 		defaultArticleState.fontFamilyOption
 	);
-	const [fontSize, setFontSize] = useState(defaultArticleState.fontSizeOption);
+	const [fontSizeOption, setFontSize] = useState(
+		defaultArticleState.fontSizeOption
+	);
 	const [fontColor, setFontColor] = useState(defaultArticleState.fontColor);
-	const [bgColor, setBgColor] = useState(defaultArticleState.backgroundColor);
+	const [backgroundColor, setBgColor] = useState(
+		defaultArticleState.backgroundColor
+	);
 	const [contentWidth, setContentWidth] = useState(
 		defaultArticleState.contentWidth
 	);
@@ -39,51 +49,48 @@ export const ArticleParamsForm = () => {
 	// Обработчики полей формы
 	const handleFontFamily = (fontFamily: OptionType) => {
 		setFontFamily(fontFamily);
-		console.log('fontFamily:', fontFamily);
 	};
 
 	const handleFontSize = (fontSize: OptionType) => {
 		setFontSize(fontSize);
-		console.log('fontSize:', fontSize);
 	};
 
 	const handleFontColor = (fontColor: OptionType) => {
 		setFontColor(fontColor);
-		console.log('fontColor:', fontColor);
 	};
 
 	const handleBgColor = (bgColor: OptionType) => {
 		setBgColor(bgColor);
-		console.log('bgColor:', bgColor);
 	};
 
 	const handleContentWidth = (contentWidth: OptionType) => {
 		setContentWidth(contentWidth);
-		console.log('contentWidth:', contentWidth);
 	};
 
-	// Обработчик отправки формы
+	// Обработчик submit формы
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log('Settings applied:', {
-			fontFamily,
-			fontSize,
+		// Вызов callback родителя для перерисовки статьи
+		onParamsChange({
+			fontFamilyOption,
+			fontSizeOption,
 			fontColor,
-			bgColor,
+			backgroundColor,
 			contentWidth,
 		});
 	};
 
-	// Обработчик события reset формы
+	// Обработчик reset формы
 	const handleReset = (e: React.FormEvent) => {
 		e.preventDefault();
-		// Сбрасываем все состояния к начальным значениям
+		// Сбрасываем все состояния к defaultArticleState
 		setFontFamily(defaultArticleState.fontFamilyOption);
 		setFontSize(defaultArticleState.fontSizeOption);
 		setFontColor(defaultArticleState.fontColor);
 		setBgColor(defaultArticleState.backgroundColor);
 		setContentWidth(defaultArticleState.contentWidth);
-		console.log('Form reset to default values');
+		// Вызов callback родителя для перерисовки статьи
+		onParamsChange(defaultArticleState);
 	};
 
 	// Стиль текста заголовков полей формы
@@ -111,22 +118,20 @@ export const ArticleParamsForm = () => {
 							Задайте параметры
 						</Text>
 
-						{/* <StoryDecorator> */}
 						<Text {...titleFieldSettings}>
 							Шрифт
 							<Select
-								selected={fontFamily}
+								selected={fontFamilyOption}
 								options={fontFamilyOptions}
 								onChange={handleFontFamily}></Select>
 						</Text>
-						{/* </StoryDecorator> */}
 
 						<Text {...titleFieldSettings}>
 							Размер шрифта
 							<RadioGroup
 								name='size'
 								options={fontSizeOptions}
-								selected={fontSize}
+								selected={fontSizeOption}
 								onChange={handleFontSize}
 								title={''}></RadioGroup>
 						</Text>
@@ -144,7 +149,7 @@ export const ArticleParamsForm = () => {
 						<Text {...titleFieldSettings}>
 							Цвет фона
 							<Select
-								selected={bgColor}
+								selected={backgroundColor}
 								options={fontColors}
 								onChange={handleBgColor}></Select>
 						</Text>
